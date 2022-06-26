@@ -9,7 +9,7 @@ console.log(appDirectory, resolveAppPath, resolveAppPath("dist"));
 module.exports = {
   mode: "development",
   devtool: "inline-source-map",
-  entry: "./src/index.js",
+  entry: "./src/index.tsx",
   output: {
     filename: "bundle.js",
     path: path.resolve(__dirname, "dist"),
@@ -26,7 +26,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.m?js$/,
+        test: /\.(tsx|ts|js)$/,
         exclude: /node_modules/,
         use: {
           loader: "babel-loader",
