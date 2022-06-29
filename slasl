@@ -1,0 +1,91 @@
+      const columns = [
+  { field: "logo", headerName: "Logo", width: 70 },
+  { field: "name", headerName: "Name", width: 130 },
+  { field: "type", headerName: "Type", width: 130 },
+  {
+    field: "description",
+    headerName: "Description",
+    width: 90,
+  },
+];
+
+resturants &&
+      <DataGrid
+        rows={resturants}
+        columns={columns}
+        pageSize={5}
+        rowsPerPageOptions={[5]}
+        checkboxSelection
+      />
+
+      useEffect(() => {
+        const handleUpdateAllRows = async () => {
+          if (apiRef.current.getAllRowIds) {
+            const rowIds = apiRef.current.getAllRowIds();
+            let aa = [];
+            for (let i = 0; i < 4; i++) {
+              const s = await fetch(apiRef.current.getCellValue(rowIds[i], "logo"));
+              aa.push({ id: rowIds[i], logo: s.url });
+            }
+            apiRef.current.updateRows(aa);
+            //   const t = await rowIds.map(async (rowId) => {
+            //     const s = await fetch(apiRef.current.getCellValue(rowId, "logo"));
+            //     ({ id: rowId, logo: s.url });
+            //   });
+            //   apiRef.current.getAllRowIds && apiRef.current.updateRows();
+          }
+        };
+        //handleUpdateAllRows();
+      });
+      const handleUpdateAllRows = async (resturants, newPage) => {
+        //console.log(resturants);
+        if (resturants) {
+          for (let i = newPage * pageSize; i < (newPage + 1) * pageSize; i++) {
+            console.log(resturants[i].logo);
+            const s = await fetch(resturants[i].logo);
+            resturants[i].logoImg = s.url;
+            // aa.push({ id: rowIds[i], logo: s.url });
+          }
+        }
+        setresturantAll(resturants);
+        console.log(resturantAll);
+    
+        //   const t = await rowIds.map(async (rowId) => {
+        //     const s = await fetch(apiRef.current.getCellValue(rowId, "logo"));
+        //     ({ id: rowId, logo: s.url });
+        //   });
+        //   apiRef.current.getAllRowIds && apiRef.current.updateRows();
+      };
+
+      <Box sx={style}>
+      <Typography id="modal-modal-title" variant="h6" component="h2">
+        Text in a modal
+      </Typography>
+      <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+      </Typography>
+      <Button onClick={onCloseModal}>Open modal</Button>
+    </Box>
+
+
+renderCell: (cellValues) => {
+    return (
+      <div
+        style={
+          display: block,
+          text-overflow: ellipsis,
+          word-wrap: break-word,
+          overflow: hidden,
+          max-height: 3.6em,
+          line-height: 1.8em;ht"
+        }
+      >
+        {cellValues.value}
+      </div>
+    );
+      }
+
+client_id
+      88358087667-tp5fnlfo1hcvkl0qnlqohc1m5kod1rbh.apps.googleusercontent.com
+secret
+      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

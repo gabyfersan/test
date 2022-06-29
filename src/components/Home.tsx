@@ -6,6 +6,7 @@ import {
   GridColDef,
   GridValueGetterParams,
 } from "@mui/x-data-grid";
+import { BasicModal } from "./BasicModal.tsx";
 
 const pageSize = 5;
 
@@ -61,6 +62,24 @@ const columns = [
     field: "description",
     headerName: "Description",
     //width: 90,
+
+    renderCell: (cellValues) => {
+      return (
+        <div
+          style={{
+            display: "block",
+            textOverflow: "ellipsis",
+            wordBreak: "break-all",
+            overflow: "hidden",
+            maxHeight: "3.6em",
+            lineHeight: "1.8em;ht",
+          }}
+        >
+          {cellValues.value}
+        </div>
+      );
+    },
+
     flex: 5,
   },
 ];
@@ -69,7 +88,9 @@ const Home = () => {
   const [resturants, setresturants] = useState(null);
   //const [resturantAll, setresturantAll] = useState(null);
   const [nextPage, setNextPage] = useState(null);
-  const apiRef = useGridApiRef();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [rowData, setRowData] = useState(null);
+  //const apiRef = useGridApiRef();
   useEffect(() => {
     const getResturants = async () => {
       const response = await getResturantServive();
@@ -90,6 +111,7 @@ const Home = () => {
           //console.log(resturants[i].logo);
           const s = await fetch(resturants[i].logo);
           resturants[i].logoImg = s.url;
+          console.log("url", s.url);
           // aa.push({ id: rowIds[i], logo: s.url });
         }
         setresturants([...resturants]);
@@ -97,12 +119,50 @@ const Home = () => {
       }
     };
     a();
-  }, [nextPage]);
+  }, [nextPage, resturants]);
+
+  const onCloseModal = () => setIsModalOpen(false);
+  const desending = (a, b) => {
+    if (a > b) {
+      return -1;
+    }
+    if (b > a) {
+      return 1;
+    }
+    return 0;
+  };
+  const ascending = (a, b) => {
+    if (a < b) return -1;
+    if (a > b) return 1;
+    return 0;
+  };
 
   return (
     <div style={{ height: 400, width: "100%" }}>
       {resturants && (
         <DataGrid
+          // onPageChange={(model) => {
+          //   console.log("onPageChange", model);
+          //   //setresturants([...resturants]);
+          // }}
+          // onStateChange={(model) => {
+          //   console.log("onStateChange",model);
+          //   //setresturants([...resturants]);
+          // }}
+          onSortModelChange={(model) => {
+            if (model.length > 0) {
+              //console.log(model);
+              const field = model[0].field;
+              let resturantsSorted = [...resturants];
+              resturantsSorted.sort((rowa, rowb) => {
+                //console.log(rowa[field]);
+                return model[0].sort === "asc"
+                  ? ascending(rowa[field], rowb[field])
+                  : desending(rowa[field], rowb[field]);
+              });
+              setresturants(resturantsSorted);
+            }
+          }}
           //onPageChange={(newPage) => handleUpdateAllRows(resturants, newPage)}
           onPageChange={(newPage) => setNextPage(newPage)}
           //apiRef={apiRef}
@@ -113,8 +173,17 @@ const Home = () => {
           //checkboxSelection
           pagination
           //rowsPerPageOptions={[]}
+          onRowClick={(rowData) => {
+            setRowData(rowData);
+            setIsModalOpen(true);
+          }}
         />
       )}
+      <BasicModal
+        isModalOpen={isModalOpen}
+        onCloseModal={onCloseModal}
+        rowData={rowData}
+      />
     </div>
   );
 };
